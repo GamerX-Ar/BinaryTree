@@ -1,0 +1,6 @@
+#ifndef BINARYTREE_USER_TYPE_H
+#define BINARYTREE_USER_TYPE_H
+
+typedef char T;
+
+#endif //BINARYTREE_USER_TYPE_H
