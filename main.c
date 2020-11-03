@@ -9,7 +9,7 @@ int main() {
 
     init_tree(&tree);
 
-    tree.traversal = TRAVERSAL.inorder;
+    tree.traversal = TRAVERSAL.preorder;
 
     tree.add(tree.create_node('r'), &tree);
     tree.add(tree.create_node('o'), &tree);
@@ -19,8 +19,10 @@ int main() {
     tree.call(&tree, CALLBACKS.print, 0);
     node_t *t = tree.call(&tree, CALLBACKS.search, 't');
 
-    printf("\nTree height is %d", tree.height(&tree));
-    printf("\nTree size is %d", tree.size(&tree));
+    printf("\nFound node is %c.", t->value);
+
+    printf("\nTree height is %d.", tree.height(&tree));
+    printf("\nTree size is %d.", tree.size(&tree));
 
     tree.destroy(&tree);
 

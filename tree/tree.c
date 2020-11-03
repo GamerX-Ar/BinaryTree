@@ -25,12 +25,19 @@ node_t * create_node(T value) {
     return node;
 }
 
+/**
+ * Добавить вершину к листу (лист станет поддеревом). Использыется цикл.
+ *
+ * @param new_node  Указатель на вершину, которую требуется добавить
+ * @param node  Адрес указателя (не структуры! - т.е. фактически адрес на адрес)
+ * @return
+ */
 void add_node_loop(node_t *new_node, node_t **node) {
     while ( (*node) ) { // пока узел существует
         if (new_node->value < (*node)->value) {  // значение новой вершины меньше - добавляем слева
-            *node = (*node)->left;
+            node = &((*node)->left);
         } else {  // значение новой вершины больше либо равно - добавляем справа
-            *node = (*node)->right;
+            node = &((*node)->right);
         }
     }
     *node = new_node;
