@@ -26,13 +26,13 @@ node_t * create_node(T value) {
 }
 
 /**
- * Добавить вершину к листу (лист станет поддеревом). Использыется цикл.
+ * Добавить вершину к листу (лист станет поддеревом). Используется цикл.
  *
  * @param new_node  Указатель на вершину, которую требуется добавить
  * @param node  Адрес указателя (не структуры! - т.е. фактически адрес на адрес)
  * @return
  */
-void add_node_loop(node_t *new_node, node_t **node) {
+void add_node_iteratively(node_t *new_node, node_t **node) {
     while ( (*node) ) { // пока узел существует
         if (new_node->value < (*node)->value) {  // значение новой вершины меньше - добавляем слева
             node = &((*node)->left);
@@ -44,19 +44,19 @@ void add_node_loop(node_t *new_node, node_t **node) {
 }
 
 /**
- * Добавить вершину к листу (лист станет поддеревом).
+ * Добавить вершину к листу (лист станет поддеревом). Используется рекурсия.
  *
  * @param new_node  Указатель на вершину, которую требуется добавить
  * @param node  Адрес указателя (не структуры! - т.е. фактически адрес на адрес)
  * @return
  */
-node_t * add_node(node_t *new_node, node_t **node) {
+node_t * add_node_recursively(node_t *new_node, node_t **node) {
     if ( !(*node) ) {  // если узел пуст
         *node = new_node;
     } else if (new_node->value < (*node)->value) {  // значение новой вершины меньше - добавляем слева
-        (*node)->left = add_node(new_node, &(*node)->left);
+        (*node)->left = add_node_recursively(new_node, &(*node)->left);
     } else {  // значение новой вершины больше либо равно - добавляем справа
-        (*node)->right = add_node(new_node, &(*node)->right);
+        (*node)->right = add_node_recursively(new_node, &(*node)->right);
     }
     return *node;
 }
@@ -68,8 +68,8 @@ node_t * add_node(node_t *new_node, node_t **node) {
  * @param this  Дерево
  */
 void add(node_t *node, tree_t *this) {
-//    add_node(node, &(this->root));
-    add_node_loop(node, &(this->root));
+//    add_node_recursively(node, &(this->root));
+    add_node_iteratively(node, &(this->root));
 }
 
 /**
@@ -168,18 +168,34 @@ void destroy_tree(tree_t *tree) {
     destroy_node(tree->root);
 }
 
+/**
+ * Выполнить операцию над деревом согласно выбранной стратегии.
+ *
+ * @param this  Дерево, над которым требуется выполнить операцию.
+ * @param callback  Операция.
+ * @param key  Передаваемый в функцию обратного вызова параметр.
+ * @return  Результат выполнения операции.
+ */
 void * call(tree_t *this, void *(*callback)(node_t *, T), T key) {
     return this->traversal(this->root, callback, key);
 }
 
+/**
+ * Инициализация структуры.
+ *
+ * @param tree  Структура (дерево), которую необходимо инициализировать.
+ */
 void init_tree(tree_t *tree) {
+    // Указатель на вершину
     tree->root = NULL;
+    // Стратегия обхода
     tree->traversal = TRAVERSAL.preorder;
-    tree->create_node = &create_node;
-    tree->add = &add;
-    tree->search = &search_tree;
-    tree->height = &height_tree;
-    tree->size = &size_tree;
-    tree->destroy = &destroy_tree;
+    // Методы
+    tree->create_node = &create_node; // создать новую вершину
+    tree->add = &add; // добавить вершину к дереву
+    tree->search = &search_tree; // поиск по всему дереву
+    tree->height = &height_tree; // вычислить высоту дерева
+    tree->size = &size_tree; // вычислить размер дерева (кол-во вершин)
+    tree->destroy = &destroy_tree; // разрушить дерево
     tree->call = &call;
 }
